@@ -1,0 +1,30 @@
+---
+# tasks file for inetRouter
+- name: enable ip_forward
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+
+- name: MASQUERADE
+  iptables_raw:
+    name: MASQUERADE
+    table: nat
+    rules: |
+      -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+
+- name: tamplate bonding
+  copy:
+    src: "{{ item }}"
+    dest: /etc/sysconfig/network-scripts/
+    owner: root
+    group: root
+    mode: 0644
+  with_fileglob:
+    - ifcfg*
+    - route-bond0
+
+- name: restart network
+  systemd:
+    name: network
+    state: restarted

@@ -1,0 +1,58 @@
+---
+- hosts: inetRouter
+  become: true
+  roles:
+    - inetRouter
+
+- hosts: centralRouter
+  become: true
+  roles:
+    - centralRouter
+
+- hosts: office1Router1
+  become: true
+  vars:
+    vlan: 10
+    ip_addr: 10.10.10.2
+  roles:
+    - office1Router
+
+- hosts: office1Router2
+  become: true
+  vars:
+    vlan: 20
+    ip_addr: 10.10.10.2
+  roles:
+    - office1Router
+
+- hosts: testClient1
+  become: true
+  vars:
+    vlan: 10
+    ip_addr: 10.10.10.254
+  roles:
+    - testClientServer
+
+- hosts: testServer1
+  become: true
+  vars:
+    vlan: 10
+    ip_addr: 10.10.10.1
+  roles:
+    - testClientServer
+
+- hosts: testClient2
+  become: true
+  vars:
+    vlan: 20
+    ip_addr: 10.10.10.254
+  roles:
+    - testClientServer
+
+- hosts: testServer2
+  become: true
+  vars:
+    vlan: 20
+    ip_addr: 10.10.10.1
+  roles:
+    - testClientServer

@@ -1,0 +1,29 @@
+---
+# tasks file for centralRouter
+- name: enable ip_forward
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+
+- name: correct interface eth0
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-eth0
+    regexp: 'DEFROUTE'
+    line: DEFROUTE=no
+
+- name: copy bonding file
+  copy:
+    src: "{{ item }}"
+    dest: /etc/sysconfig/network-scripts/
+    owner: root
+    group: root
+    mode: 0644
+  with_fileglob:
+    - ifcfg*
+
+- name: restart network
+  systemd:
+    name: network
+    state: restarted
+

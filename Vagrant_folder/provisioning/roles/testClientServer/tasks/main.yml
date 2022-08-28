@@ -1,0 +1,22 @@
+---
+# tasks file for testClientServer
+- name: template vlan
+  template:
+    src: ifcfg-eth1.vlan.j2
+    dest : /etc/sysconfig/network-scripts/ifcfg-eth1.{{ vlan }}
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - up interface_vlan
+
+- name: correct interface eth0
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-eth0
+    regexp: 'DEFROUTE'
+    line: DEFROUTE=no
+
+- name: restart network
+  systemd:
+    name: network
+    state: restarted

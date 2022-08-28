@@ -1,0 +1,41 @@
+---
+# tasks file for office1Router
+- name: template vlan
+  template:
+    src: ifcfg-eth2.vlan.j2
+    dest : /etc/sysconfig/network-scripts/ifcfg-eth2.{{ vlan }}
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - up interface_vlan
+
+- name: enable ip_forward
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+
+- name: MASQUERADE
+  iptables_raw:
+    name: MASQUERADE
+    table: nat
+    rules: |
+      -A POSTROUTING -s 10.10.10.0/24 -o eth1 -j MASQUERADE
+
+- name: correct interface eth0
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-eth0
+    regexp: 'DEFROUTE'
+    line: DEFROUTE=no
+
+- name: correct interface eth1
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-eth1
+    regexp: 'GATEWAY'
+    line: GATEWAY=192.168.2.1
+
+- name: restart network
+  systemd:
+    name: network
+    state: restarted

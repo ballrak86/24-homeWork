@@ -1,0 +1,6 @@
+---
+# handlers file for office1Router
+- name: up interface_vlan
+  shell:
+    cmd: ifup eth2.{{ vlan }}
+
