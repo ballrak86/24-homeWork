@@ -16,6 +16,8 @@ provisioning/
     ├── office1Router
     └── testClientServer
 ```
+## Как выглядит сеть и запрос curl
+![net](/net.JPG "Сеть дз")
 
 ## Описание как запустить виртуальную машину (кратко)
 ```
